@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -16,8 +17,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     const lastLoggedIn = await this.userService.getLastLoggedIn(payload.sub);
-    if (lastLoggedIn > payload.iat) {
-      return UnauthorizedException;
+    if (dayjs(lastLoggedIn).valueOf() > payload.iat) {
+      throw new UnauthorizedException();
     }
     const user = {
       id: payload.sub,

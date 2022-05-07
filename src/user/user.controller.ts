@@ -10,6 +10,7 @@ import {
   Inject,
   forwardRef,
   UnauthorizedException,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -17,6 +18,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from './entities/user.entity';
 import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { Role } from 'src/auth/roles/role.enum';
 
 @Controller('user')
 export class UserController {
@@ -25,6 +29,8 @@ export class UserController {
     private readonly authService: AuthService,
   ) {}
 
+  @Roles(Role.TEACHER)
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = new User();
@@ -50,8 +56,14 @@ export class UserController {
     return token;
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
+  async findAll(@Request() req) {
+    console.log(req.user);
+    // console.log(req.body.user.jwtLastLoggedIn);
+
+    return await this.userService.getLastLoggedIn(1);
+
     return this.userService.findAll();
   }
 

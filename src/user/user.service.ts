@@ -20,10 +20,7 @@ export class UserService {
   }
 
   async findAll() {
-    return await this.userRepository
-      .createQueryBuilder()
-      .select('user')
-      .getMany();
+    return await this.userRepository.find();
   }
 
   findOne(id: number) {
@@ -42,14 +39,16 @@ export class UserService {
     return user;
   }
   async getLastLoggedIn(userId: number) {
-    const result: { lastLoggedIn: number } = await this.userRepository
+    const result: { lastLoggedIn: string } = await this.userRepository
       .createQueryBuilder('user')
       .select('user.lastLoggedIn', 'lastLoggedIn')
-      .where('id = :id', { id: userId })
+      .where('user.id = :id', { id: userId })
       .getRawOne();
     return result.lastLoggedIn;
   }
   async updateLastLoggedIn(userId: number, lastLoggedIn: string) {
-    await this.userRepository.update(userId, { lastLoggedIn });
+    const x = await this.userRepository.update(userId, { lastLoggedIn });
+    
+    
   }
 }
