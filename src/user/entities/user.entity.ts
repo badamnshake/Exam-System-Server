@@ -1,3 +1,5 @@
+import { type } from 'os';
+import { timestamp } from 'rxjs';
 import { Role } from 'src/auth/roles/role.enum';
 import {
   BeforeInsert,
@@ -45,8 +47,8 @@ export class User {
 
   //-----------------------------------------------------
 
-  @Column({ nullable: true })
-  userLastLoggedIn: Date;
+  @Column('timestamp',{nullable: true})
+  lastLoggedIn: Date;
 
   @CreateDateColumn()
   createdAt: Date;

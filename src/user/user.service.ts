@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Role } from 'src/auth/roles/role.enum';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,8 +12,11 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+
+  async create(createUser: User) {
+    const newUser = this.userRepository.create(createUser);
+    const result = await this.userRepository.save(newUser);
+    return result;
   }
 
   async findAll() {
@@ -33,7 +37,19 @@ export class UserService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
-  findByEmail(email: string) {
-    return { email: 'hello', password: 'hello' };
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOneBy({ email });
+    return user;
+  }
+  async getLastLoggedIn(userId: number) {
+    const result: { lastLoggedIn: number } = await this.userRepository
+      .createQueryBuilder('user')
+      .select('user.lastLoggedIn', 'lastLoggedIn')
+      .where('id = :id', { id: userId })
+      .getRawOne();
+    return result.lastLoggedIn;
+  }
+  async updateLastLoggedIn(userId: number, lastLoggedIn: string) {
+    await this.userRepository.update(userId, { lastLoggedIn });
   }
 }
