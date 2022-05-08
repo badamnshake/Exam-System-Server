@@ -38,7 +38,6 @@ export class UserController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = new User();
-    console.log(user.role);
 
     user.information = createUserDto.information;
     user.email = createUserDto.email;

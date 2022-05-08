@@ -48,7 +48,5 @@ export class UserService {
   }
   async updateLastLoggedIn(userId: number, lastLoggedIn: string) {
     const x = await this.userRepository.update(userId, { lastLoggedIn });
-    
-    
   }
 }
