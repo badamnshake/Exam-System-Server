@@ -25,8 +25,8 @@ export class Question {
   @OneToMany(() => Option, (option) => option.question)
   options: Option[];
 
-  @OneToOne(() => Option)
-  correctAnswer: Option;
+  @Column({type: 'int', nullable: true})
+  correctAnswerId: number;
 
   @ManyToOne(() => Subject)
   subject: Subject;

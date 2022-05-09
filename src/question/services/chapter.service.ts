@@ -17,6 +17,9 @@ export class ChapterService {
     return result;
   }
 
+  async findById(id: number) {
+    return await this.chapterRepository.findOne({ where: { id } });
+  }
 
   async remove(id: number) {
     return await this.chapterRepository.delete(id);
