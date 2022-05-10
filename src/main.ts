@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({origin: '*'});
   const config = new DocumentBuilder()
     .setTitle('Exam System API')
     .setDescription('The exam System API description')
