@@ -18,6 +18,7 @@ import { Subject } from '../entities/subject.entity';
 import { ChapterService } from '../services/chapter.service';
 import { SubjectService } from '../services/subject.service';
 
+@ApiTags('subject')
 @Controller('subject')
 export class SubjectController {
   constructor(

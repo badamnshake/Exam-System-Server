@@ -10,10 +10,11 @@ import { Subject } from './entities/subject.entity';
 import { Question } from './entities/question.entity';
 import { Option } from './entities/option.entity';
 import { OptionService } from './services/option.service';
+import { OptionController } from './controllers/option.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Chapter, Subject, Question, Option])],
-  controllers: [QuestionController, SubjectController],
+  controllers: [QuestionController, SubjectController, OptionController],
   providers: [QuestionService, ChapterService, SubjectService, OptionService],
 })
 export class QuestionModule {}

@@ -16,7 +16,9 @@ import { ChapterService } from '../services/chapter.service';
 import { SubjectService } from '../services/subject.service';
 import { OptionService } from '../services/option.service';
 import { STATUS_CODES } from 'http';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('questions')
 @Controller('question')
 export class QuestionController {
   constructor(
@@ -59,7 +61,7 @@ export class QuestionController {
     let answer = await this.optionService.create(newOption);
 
     newq.correctAnswerId = answer.id;
-
+    await this.questionService.updateCorrectAnswerId(newq.id, answer.id);
     return STATUS_CODES.OK;
   }
 
@@ -78,11 +80,12 @@ export class QuestionController {
     @Param('id') id: string,
     @Body() updateQuestionDto: UpdateQuestionDto,
   ) {
-    return this.questionService.update(+id, updateQuestionDto);
+    // return this.questionService.updateCorrectAnswerId(+id, updateQuestionDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.questionService.remove(+id);
   }
+  
 }

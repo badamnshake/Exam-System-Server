@@ -17,23 +17,24 @@ export class QuestionService {
     const result = await this.questionRepository.save(newQuestion);
     return result;
   }
+  async updateCorrectAnswerId(id: number, correctAnswerId: number) {
+    await this.questionRepository.update(id, { correctAnswerId });
+  }
 
   async remove(id: number) {
     return await this.questionRepository.delete(id);
   }
 
-  findAll() {
-    return `This action returns all question`;
+  async findAll() {
+    const result = await this.questionRepository.find({
+      relations: ['subject', 'chapter', 'options'],
+    });
+    return result;
   }
 
   async findOne(id: number) {
-    const result =  await this.questionRepository.find({relations: ['subject', 'chapter', 'options', 'correctAnswer']});
-    console.log(result);
+    const result = await this.questionRepository.findOneBy({ id });
     return result;
-    
   }
-
-  update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
-  }
+  
 }
