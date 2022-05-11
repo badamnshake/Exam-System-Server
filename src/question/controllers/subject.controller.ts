@@ -75,4 +75,5 @@ export class SubjectController {
   deleteChapter(@Param('id') id: number) {
     return this.chapterService.remove(id);
   }
+
 }

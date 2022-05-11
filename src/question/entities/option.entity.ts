@@ -4,9 +4,9 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { Question } from "./question.entity";
-import { Subject } from "./subject.entity";
+} from 'typeorm';
+import { Question } from './question.entity';
+import { Subject } from './subject.entity';
 
 @Entity()
 export class Option {

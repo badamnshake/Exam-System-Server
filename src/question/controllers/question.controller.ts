@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { QuestionService } from '../services/question.service';
 import { CreateQuestionDto } from '../dto/question/create-question.dto';
@@ -75,6 +76,13 @@ export class QuestionController {
     return await this.questionService.findOne(+id);
   }
 
+  @Get('chapter/:id')
+  async findFromChapterId(@Query() { take, skip }, @Param('id') id: string) {
+    const chapter = await this.chapterService.findById(+id);
+    if (!chapter) return null;
+    return await this.questionService.findFromChapter(take, skip, chapter);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -87,5 +95,4 @@ export class QuestionController {
   remove(@Param('id') id: string) {
     return this.questionService.remove(+id);
   }
-  
 }
