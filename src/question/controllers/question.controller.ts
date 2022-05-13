@@ -12,10 +12,8 @@ import { QuestionService } from '../services/question.service';
 import { CreateQuestionDto } from '../dto/question/create-question.dto';
 import { UpdateQuestionDto } from '../dto/question/update-question.dto';
 import { Question } from '../entities/question.entity';
-import { Option } from '../entities/option.entity';
 import { ChapterService } from '../services/chapter.service';
 import { SubjectService } from '../services/subject.service';
-import { OptionService } from '../services/option.service';
 import { STATUS_CODES } from 'http';
 import { ApiTags } from '@nestjs/swagger';
 
@@ -26,7 +24,6 @@ export class QuestionController {
     private readonly questionService: QuestionService,
     private readonly subjectService: SubjectService,
     private readonly chapterService: ChapterService,
-    private readonly optionService: OptionService,
   ) {}
 
   @Post()
@@ -45,25 +42,19 @@ export class QuestionController {
     question.subject = subject;
     question.hint = createQuestionDto.hint;
     question.information = createQuestionDto.information;
+
+    // for (let i = 0; i < createQuestionDto.options.length; i++) {
+    //   question.options.push(createQuestionDto.options[i]);
+    // }
+    createQuestionDto.options.forEach((element) => {
+      question.options.push(element);
+    });
+
     question.reportedCount = 0;
 
     let newq = await this.questionService.create(question);
 
-    createQuestionDto.optionsNotIncludingAnswer.forEach((option) => {
-      let newOption = new Option();
-      newOption.name = option;
-      newOption.question = newq;
-      this.optionService.create(newOption);
-    });
-
-    let newOption = new Option();
-    newOption.name = createQuestionDto.optionWhichIsAnswer;
-    newOption.question = newq;
-    let answer = await this.optionService.create(newOption);
-
-    newq.correctAnswerId = answer.id;
-    await this.questionService.updateCorrectAnswerId(newq.id, answer.id);
-    return STATUS_CODES.OK;
+    return newq;
   }
 
   @Get()

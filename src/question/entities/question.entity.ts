@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Chapter } from "./chapter.entity";
-import { Option } from "./option.entity";
 import { Subject } from "./subject.entity";
 
 @Entity()
@@ -22,11 +21,8 @@ export class Question {
   @Column({ nullable: true })
   hint: string;
 
-  @OneToMany(() => Option, (option) => option.question)
-  options: Option[];
-
-  @Column({type: 'int', nullable: true})
-  correctAnswerId: number;
+  @Column(() => qOption)
+  options: qOption[];
 
   @ManyToOne(() => Subject)
   subject: Subject;
@@ -41,3 +37,8 @@ export class Question {
   createdAt: Date;
 }
 
+
+export class qOption {
+  name: string
+  isCorrect: boolean
+}

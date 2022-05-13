@@ -19,7 +19,7 @@ export class QuestionService {
     return result;
   }
   async updateCorrectAnswerId(id: number, correctAnswerId: number) {
-    await this.questionRepository.update(id, { correctAnswerId });
+    // await this.questionRepository.update(id, { correctAnswerId });
   }
 
   async remove(id: number) {
