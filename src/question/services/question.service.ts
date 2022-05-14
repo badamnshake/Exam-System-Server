@@ -38,6 +38,8 @@ export class QuestionService {
     const result = await this.questionRepository
       .createQueryBuilder('question')
       .select('question')
+      .leftJoinAndSelect('question.subject', 'subject')
+      .leftJoinAndSelect('question.chapter', 'chapter')
       .take(take)
       .skip(skip)
       .orderBy()
@@ -53,7 +55,10 @@ export class QuestionService {
   }
 
   async findOne(id: number) {
-    const result = await this.questionRepository.findOneBy({ id });
+    const result = await this.questionRepository.findOne({
+      where: { id: id },
+      relations: ['subject', 'chapter'],
+    });
 
     return result;
   }

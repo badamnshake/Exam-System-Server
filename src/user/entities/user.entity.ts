@@ -1,6 +1,7 @@
 import { type } from 'os';
 import { timestamp } from 'rxjs';
 import { Role } from 'src/auth/roles/role.enum';
+import { ExamResult } from 'src/exam/entities/exam-result.entity';
 import {
   BeforeInsert,
   Column,
@@ -53,8 +54,8 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  //   @OneToMany(() => ExamResult, (testresult) => testresult.student, {
-  //     nullable: true,
-  //   })
-  //   testResults: ExamResult[];
+    @OneToMany(() => ExamResult, (testresult) => testresult.student, {
+      nullable: true,
+    })
+    testResults: ExamResult[];
 }

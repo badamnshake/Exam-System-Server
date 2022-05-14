@@ -24,10 +24,10 @@ export class Question {
   @Column()
   options: string;
 
-  @ManyToOne(() => Subject, { eager: false })
+  @ManyToOne(() => Subject)
   subject: Subject;
 
-  @ManyToOne(() => Chapter, { eager: false })
+  @ManyToOne(() => Chapter)
   chapter: Chapter;
 
   @Column()

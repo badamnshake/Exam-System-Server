@@ -5,15 +5,17 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { Question } from "./question.entity";
+} from 'typeorm';
+import { Question } from '../../question/entities/question.entity';
+import { ExamResult } from './exam-result.entity';
 
 @Entity()
 export class Answer {
+  // fields
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   isAnswered: boolean;
 
   @Column({ nullable: true })
@@ -23,8 +25,12 @@ export class Answer {
   timeTaken: number;
 
   @Column()
-  optionId: number;
+  wasCorrect: boolean;
 
+  // relations
   @ManyToOne(() => Question)
   question: Question;
+
+  @ManyToOne(() => ExamResult)
+  examResult: ExamResult;
 }
