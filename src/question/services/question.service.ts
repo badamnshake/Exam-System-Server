@@ -60,6 +60,9 @@ export class QuestionService {
       count: total,
     };
   }
+  async updateQuestion(id: number, question: UpdateQuestionDto) {
+    return await this.questionRepository.update(id,{ ...question });
+  }
   async findAllPage(query) {
     const take = query.take || 10;
     const skip = query.skip || 0;

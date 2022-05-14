@@ -8,11 +8,14 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Response,
 } from '@nestjs/common';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { CreateChapterDto } from '../dto/chapter/create-chapter.dto';
+import { UpdateChapterDto } from '../dto/chapter/update-chapter.dto';
 import { CreateSubjectDto } from '../dto/subject/create-subject.dto';
+import { UpdateSubjectDto } from '../dto/subject/update-subject.dto';
 import { Chapter } from '../entities/chapter.entity';
 import { Subject } from '../entities/subject.entity';
 import { ChapterService } from '../services/chapter.service';
@@ -26,16 +29,7 @@ export class SubjectController {
     private readonly chapterService: ChapterService,
   ) {}
 
-  @Get()
-  findAll() {
-    return this.subjectService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.subjectService.findById(+id);
-  }
-
+  //#region  Subject
   @Post()
   async createSubject(@Body() reqBody: CreateSubjectDto) {
     let subject = await this.subjectService.findByNam(reqBody.name);
@@ -54,12 +48,37 @@ export class SubjectController {
     return true;
   }
 
-  @Delete(':id')
-  async deleteSubject(@Param('id') id: string) {
-    return this.subjectService.remove(+id);
+  @Get()
+  findAll() {
+    return this.subjectService.findAll();
+  }
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return await this.subjectService.findById(+id);
   }
 
-  // chapter stuff
+  @Put(':id')
+  async updateSubject(
+    @Param('id') id: number,
+    @Body() reqBody: UpdateSubjectDto,
+  ) {
+    const subject = await this.subjectService.findById(id);
+    if (subject == null) {
+      throw new NotFoundException();
+    }
+    subject.name = reqBody.name;
+    return await this.subjectService.update(id, subject);
+  }
+
+  @Delete(':id')
+  async deleteSubject(@Param('id') id: string) {
+    return await this.subjectService.remove(+id);
+  }
+
+  //#endregion
+
+  //#region Chapter
+
   @Post('chapter')
   async createChapter(@Body() reqBody: CreateChapterDto) {
     const subject = await this.subjectService.findById(reqBody.subjectId);
@@ -71,9 +90,28 @@ export class SubjectController {
     chapter.name = reqBody.name;
     return await this.chapterService.create(chapter);
   }
+  @Get('chapter/:id')
+  async findChapterById(@Param('id') id: string) {
+    return await this.chapterService.findById(+id);
+  }
+
+  @Put('chapter/:id')
+  async updateChapter(
+    @Param('id') id: number,
+    @Body() reqBody: UpdateChapterDto,
+  ) {
+    const chapter = await this.chapterService.findById(id);
+    if (chapter == null) {
+      throw new NotFoundException();
+    }
+    chapter.name = reqBody.name;
+    return await this.chapterService.update(id, chapter);
+  }
+
   @Delete('chapter/:id')
   deleteChapter(@Param('id') id: number) {
     return this.chapterService.remove(id);
   }
 
+  //#endregion
 }

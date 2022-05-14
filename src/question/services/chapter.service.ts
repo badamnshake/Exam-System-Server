@@ -24,4 +24,8 @@ export class ChapterService {
   async remove(id: number) {
     return await this.chapterRepository.delete(id);
   }
+
+  async update(id: number, chapter: Chapter) {
+    return await this.chapterRepository.save(chapter);
+  }
 }

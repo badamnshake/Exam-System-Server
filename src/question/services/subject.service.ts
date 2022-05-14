@@ -17,6 +17,10 @@ export class SubjectService {
     return result;
   }
 
+  async update(id: number, subject: Subject) {
+    return await this.subjectRepository.save(subject);
+  }
+
   async findAll() {
     return await this.subjectRepository.find({ relations: ['chapters'] });
   }
