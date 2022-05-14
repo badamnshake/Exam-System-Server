@@ -23,8 +23,8 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    return await this.userRepository.findBy({ id });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

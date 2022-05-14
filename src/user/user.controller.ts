@@ -79,12 +79,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(@Request() req) {
-    console.log(req.user);
-    // console.log(req.body.user.jwtLastLoggedIn);
-
-    return await this.userService.getLastLoggedIn(1);
-
-    return this.userService.findAll();
+    return await this.userService.findAll();
   }
 
   @Get(':id')
