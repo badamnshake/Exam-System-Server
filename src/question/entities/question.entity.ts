@@ -6,9 +6,9 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { Chapter } from "./chapter.entity";
-import { Subject } from "./subject.entity";
+} from 'typeorm';
+import { Chapter } from './chapter.entity';
+import { Subject } from './subject.entity';
 
 @Entity()
 export class Question {
@@ -21,13 +21,13 @@ export class Question {
   @Column({ nullable: true })
   hint: string;
 
-  @Column(() => qOption)
-  options: qOption[];
+  @Column()
+  options: string;
 
-  @ManyToOne(() => Subject)
+  @ManyToOne(() => Subject, { eager: false })
   subject: Subject;
 
-  @ManyToOne(() => Chapter)
+  @ManyToOne(() => Chapter, { eager: false })
   chapter: Chapter;
 
   @Column()
@@ -37,8 +37,3 @@ export class Question {
   createdAt: Date;
 }
 
-
-export class qOption {
-  name: string
-  isCorrect: boolean
-}

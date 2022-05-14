@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PaginationQuery } from 'src/_shared/pagination-query.dto';
 import { Like, Repository } from 'typeorm';
 import { CreateQuestionDto } from '../dto/question/create-question.dto';
 import { UpdateQuestionDto } from '../dto/question/update-question.dto';
@@ -26,15 +27,34 @@ export class QuestionService {
     return await this.questionRepository.delete(id);
   }
 
-  async findAll() {
-    const result = await this.questionRepository.find({
-      relations: ['subject', 'chapter', 'options'],
-    });
-    return result;
+  async findAll(take: number, skip: number) {
+    // const result = await this.questionRepository.find({
+    //   relations: ['subject', 'chapter'],
+    //   take,
+    //   skip,
+    //   order:{id: 'DESC'}
+    // });
+
+    const result = await this.questionRepository
+      .createQueryBuilder('question')
+      .select('question')
+      .take(take)
+      .skip(skip)
+      .orderBy()
+      .getMany();
+    const total = await this.questionRepository
+      .createQueryBuilder('question')
+      .getCount();
+
+    return {
+      data: result,
+      count: total,
+    };
   }
 
   async findOne(id: number) {
     const result = await this.questionRepository.findOneBy({ id });
+
     return result;
   }
 
@@ -44,7 +64,6 @@ export class QuestionService {
 
     const result = await this.questionRepository
       .createQueryBuilder('question')
-      .leftJoinAndSelect('question.options', 'options')
       .where('question.chapterId = :id', { id: chapter.id })
       .take(take)
       .skip(skip)
@@ -61,23 +80,6 @@ export class QuestionService {
     };
   }
   async updateQuestion(id: number, question: UpdateQuestionDto) {
-    return await this.questionRepository.update(id,{ ...question });
-  }
-  async findAllPage(query) {
-    const take = query.take || 10;
-    const skip = query.skip || 0;
-    const keyword = query.keyword || '';
-
-    const [result, total] = await this.questionRepository.findAndCount({
-      where: { information: Like('%' + keyword + '%') },
-      order: { information: 'DESC' },
-      take: take,
-      skip: skip,
-    });
-
-    return {
-      data: result,
-      count: total,
-    };
+    return await this.questionRepository.update(id, { ...question });
   }
 }

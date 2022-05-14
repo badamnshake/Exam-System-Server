@@ -18,6 +18,7 @@ import { SubjectService } from '../services/subject.service';
 import { STATUS_CODES } from 'http';
 import { ApiTags } from '@nestjs/swagger';
 import { NotFoundError } from 'rxjs';
+import { PaginationQuery } from 'src/_shared/pagination-query.dto';
 
 @ApiTags('questions')
 @Controller('question')
@@ -44,10 +45,7 @@ export class QuestionController {
     question.subject = subject;
     question.hint = createQuestionDto.hint;
     question.information = createQuestionDto.information;
-
-    createQuestionDto.options.forEach((element) => {
-      question.options.push(element);
-    });
+    question.options = createQuestionDto.options;
 
     question.reportedCount = 0;
 
@@ -57,8 +55,10 @@ export class QuestionController {
   }
 
   @Get()
-  findAll() {
-    return this.questionService.findAll();
+  async findAll(@Query() pagination: PaginationQuery) {
+    const take = pagination.limit || 10;
+    const skip = pagination.page * take || 0;
+    return await this.questionService.findAll(take, skip);
   }
 
   @Get(':id')

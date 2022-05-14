@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiBody, ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString, MinLength } from 'class-validator';
 
@@ -19,8 +19,7 @@ export class CreateQuestionDto {
 
   @ApiProperty()
   @IsNotEmpty({ message: 'options must not be empty' })
-  options: { name: string; isCorrect: boolean }[];
-
+  options: string;
 
   @ApiProperty()
   @IsNumber()
@@ -33,4 +32,10 @@ export class CreateQuestionDto {
   chapterId: number;
 }
 
+export class qOptionDto {
+  @ApiProperty()
+  name: string;
 
+  @ApiProperty()
+  isCorrect: boolean;
+}
