@@ -48,14 +48,14 @@ export class User {
 
   //-----------------------------------------------------
 
-  @Column('timestamp',{nullable: true})
+  @Column('timestamp', { nullable: true })
   lastLoggedIn: Date;
 
   @CreateDateColumn()
   createdAt: Date;
 
-    @OneToMany(() => ExamResult, (testresult) => testresult.student, {
-      nullable: true,
-    })
-    testResults: ExamResult[];
+  @OneToMany(() => ExamResult, (testresult) => testresult.student, {
+    nullable: true,
+  })
+  testResults: ExamResult[];
 }
