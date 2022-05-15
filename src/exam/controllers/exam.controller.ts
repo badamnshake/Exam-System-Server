@@ -16,7 +16,9 @@ import { QuestionService } from 'src/question/services/question.service';
 import { Exam } from '../entities/exam.entity';
 import { SubjectService } from 'src/question/services/subject.service';
 import { ChapterService } from 'src/question/services/chapter.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Exam')
 @Controller('exam')
 export class ExamController {
   constructor(
@@ -30,7 +32,7 @@ export class ExamController {
   async create(@Body() createExamDto: CreateExamDto) {
     // get all questions from id
     let questions = await Promise.all(
-      createExamDto.questions.map(async (questionId) => {
+      createExamDto.questionIds.map(async (questionId) => {
         let result = await this.questionService.findOne(questionId);
         if (result === null) {
           throw new NotFoundException('Question not found');
@@ -48,12 +50,12 @@ export class ExamController {
     // create exam
     let exam = new Exam();
 
+    exam.information = createExamDto.information;
     exam.expiryTime = createExamDto.expiryTime;
     exam.questions = questions;
     exam.chapterId = chapter.id;
     exam.subjectId = subject.id;
     // exam given times is 0 when its initialized
-    exam.givenCount = 0;
 
     return this.examService.create(exam);
   }
@@ -73,9 +75,9 @@ export class ExamController {
     const exam = await this.examService.findOne(+id);
 
     // if update the question
-    if (updateExamDto.questions) {
+    if (updateExamDto.questionIds) {
       let questions = await Promise.all(
-        updateExamDto.questions.map(async (questionId) => {
+        updateExamDto.questionIds.map(async (questionId) => {
           let result = await this.questionService.findOne(questionId);
           if (result === null) {
             throw new NotFoundException('Question not found');

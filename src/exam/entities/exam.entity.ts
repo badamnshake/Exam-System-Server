@@ -18,6 +18,9 @@ export class Exam {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  information: string;
+
   @ManyToMany(() => Question)
   @JoinTable()
   questions: Question[];
@@ -34,8 +37,6 @@ export class Exam {
   @Column({ nullable: true })
   chapterId: number;
 
-  @Column()
-  givenCount: number;
 
   @OneToMany(() => ExamResult, (testResult) => testResult.test)
   testResults: ExamResult[];
