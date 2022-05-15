@@ -36,7 +36,7 @@ export class QuestionController {
       createQuestionDto.subjectId,
     );
     let chapter = await this.chapterService.findById(
-      createQuestionDto.subjectId,
+      createQuestionDto.chapterId,
     );
     if (subject == null || chapter == null) {
       return 'Subject or Chapter not found';
