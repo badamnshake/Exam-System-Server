@@ -82,6 +82,13 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.TEACHER)
+  @Get('getAllStudents')
+  async findAllStudents() {
+    return await this.userService.findAllStudents();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);

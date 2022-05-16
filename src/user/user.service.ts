@@ -23,6 +23,9 @@ export class UserService {
     return await this.userRepository.find();
   }
 
+  async findAllStudents() {
+    return await this.userRepository.findBy({ role: Role.STUDENT });
+  }
   async findOne(id: number) {
     return await this.userRepository.findBy({ id });
   }

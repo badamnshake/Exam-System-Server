@@ -73,6 +73,13 @@ export class QuestionController {
     return await this.questionService.findFromChapter(take, skip, chapter);
   }
 
+  @Get('subject/:id')
+  async findFromSubjectId(@Query() { take, skip }, @Param('id') id: string) {
+    const subject = await this.subjectService.findById(+id);
+    if (!subject) throw new NotFoundException('Subject not found');
+    return await this.questionService.findFromSubject(take, skip, subject);
+  }
+
   @Patch(':id')
   async update(
     @Param('id') id: string,

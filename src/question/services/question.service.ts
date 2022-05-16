@@ -6,6 +6,7 @@ import { CreateQuestionDto } from '../dto/question/create-question.dto';
 import { UpdateQuestionDto } from '../dto/question/update-question.dto';
 import { Chapter } from '../entities/chapter.entity';
 import { Question } from '../entities/question.entity';
+import { Subject } from '../entities/subject.entity';
 
 @Injectable()
 export class QuestionService {
@@ -77,6 +78,28 @@ export class QuestionService {
     const total = await this.questionRepository
       .createQueryBuilder('question')
       .where('question.chapterId = :id', { id: chapter.id })
+      .getCount();
+
+    return {
+      data: result,
+      count: total,
+    };
+  }
+
+  async findFromSubject(take: number, skip: number, subject: Subject) {
+    take = take || 2;
+    skip = skip || 0;
+
+    const result = await this.questionRepository
+      .createQueryBuilder('question')
+      .where('question.subjectId = :id', { id: subject.id })
+      .take(take)
+      .skip(skip)
+      .orderBy()
+      .getMany();
+    const total = await this.questionRepository
+      .createQueryBuilder('question')
+      .where('question.chapterId = :id', { id: subject.id })
       .getCount();
 
     return {
