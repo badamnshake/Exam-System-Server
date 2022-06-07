@@ -54,16 +54,13 @@ export class QuestionService {
       count: total,
     };
   }
-
   async findOne(id: number) {
     const result = await this.questionRepository.findOne({
       where: { id: id },
       relations: ['subject', 'chapter'],
     });
-
     return result;
   }
-
   async findFromChapter(take: number, skip: number, chapter: Chapter) {
     take = take || 2;
     skip = skip || 0;

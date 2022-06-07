@@ -8,6 +8,7 @@ import {
   Delete,
   NotFoundException,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ExamService } from '../exam.service';
 import { CreateExamDto } from '../dto/create-exam.dto';
@@ -17,6 +18,7 @@ import { Exam } from '../entities/exam.entity';
 import { SubjectService } from 'src/question/services/subject.service';
 import { ChapterService } from 'src/question/services/chapter.service';
 import { ApiTags } from '@nestjs/swagger';
+import { PaginationQuery } from 'src/_shared/pagination-query.dto';
 
 @ApiTags('Exam')
 @Controller('exam')
@@ -61,8 +63,10 @@ export class ExamController {
   }
 
   @Get()
-  findAll() {
-    return this.examService.findAll();
+  findAll(@Query() pagination: PaginationQuery) {
+    const take = pagination.limit || 10;
+    const skip = pagination.page * take || 0;
+    return this.examService.findAll(take, skip);
   }
 
   @Get(':id')

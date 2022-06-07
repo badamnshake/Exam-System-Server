@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Exam } from './entities/exam.entity';
 import { QuestionModule } from 'src/question/question.module';
 import { QuestionService } from 'src/question/services/question.service';
+import { ExamResultService } from './exam-result.service';
 
 @Module({
 
@@ -13,6 +14,6 @@ import { QuestionService } from 'src/question/services/question.service';
     QuestionModule
   ],
   controllers: [ExamController],
-  providers: [ExamService]
+  providers: [ExamService, ExamResultService]
 })
 export class ExamModule {}

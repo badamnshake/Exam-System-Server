@@ -1,18 +1,20 @@
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateExamDto } from './dto/update-exam.dto';
+import { ExamResult } from './entities/exam-result.entity';
 import { Exam } from './entities/exam.entity';
 
 @Injectable()
-export class ExamService {
+export class ExamResultService {
   constructor(
     @InjectRepository(Exam)
-    private readonly examRepository: Repository<Exam>,
+    private readonly examResultRepository: Repository<ExamResult>,
   ) {}
   async create(exam: Exam) {
-    const newExam = this.examRepository.create(exam);
-    const result = await this.examRepository.save(newExam);
+    const newExam = this.examResultRepository.create(exam);
+    const result = await this.examResultRepository.save(newExam);
     return result;
   }
 
@@ -20,7 +22,7 @@ export class ExamService {
     take = take || 2;
     skip = skip || 0;
 
-    const total = await this.examRepository
+    const total = await this.examResultRepository
       .createQueryBuilder('exam')
       .getCount();
     if (total == 0) {
@@ -30,7 +32,7 @@ export class ExamService {
       };
     }
 
-    const result = await this.examRepository
+    const result = await this.examResultRepository
       .createQueryBuilder('exam')
       .select('exam.id', 'id')
       .addSelect('exam.information', 'information')
@@ -45,7 +47,7 @@ export class ExamService {
   }
 
   async findOne(id: number) {
-    const result = await this.examRepository.findOne({
+    const result = await this.examResultRepository.findOne({
       where: { id: id },
       relations: ['questions'],
     });
@@ -53,17 +55,17 @@ export class ExamService {
     return result;
   }
 
-  async update(id: number, exam: Exam) {
-    const { questions, chapterId, subjectId, expiryTime } = exam;
-    return await this.examRepository.update(id, {
-      questions,
-      chapterId,
-      subjectId,
-      expiryTime,
-    });
-  }
+//   async update(id: number, exam: Exam) {
+//     const { questions, chapterId, subjectId, expiryTime } = exam;
+//     return await this.examResultRepository.update(id, {
+//       questions,
+//       chapterId,
+//       subjectId,
+//       expiryTime,
+//     });
+//   }
 
   async remove(id: number) {
-    return await this.examRepository.delete(id);
+    return await this.examResultRepository.delete(id);
   }
 }

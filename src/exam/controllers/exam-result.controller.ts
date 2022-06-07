@@ -1,4 +1,3 @@
-
 import {
   Controller,
   Get,
@@ -9,21 +8,22 @@ import {
   Delete,
   NotFoundException,
   Put,
+  Query,
 } from '@nestjs/common';
-import { ExamService } from '../exam.service';
 import { CreateExamDto } from '../dto/create-exam.dto';
-import { UpdateExamDto } from '../dto/update-exam.dto';
 import { QuestionService } from 'src/question/services/question.service';
 import { Exam } from '../entities/exam.entity';
 import { SubjectService } from 'src/question/services/subject.service';
 import { ChapterService } from 'src/question/services/chapter.service';
 import { ApiTags } from '@nestjs/swagger';
+import { PaginationQuery } from 'src/_shared/pagination-query.dto';
+import { ExamResultService } from '../exam-result.service';
 
 @ApiTags('Exam-Result')
-@Controller('exam')
+@Controller('exam-result')
 export class ExamResultController {
   constructor(
-    private readonly examService: ExamService,
+    private readonly examResultService: ExamResultService,
     private readonly questionService: QuestionService,
     private readonly subjectService: SubjectService,
     private readonly chapterService: ChapterService,
@@ -58,45 +58,67 @@ export class ExamResultController {
     exam.subjectId = subject.id;
     // exam given times is 0 when its initialized
 
-    return this.examService.create(exam);
+    return this.examResultService.create(exam);
   }
+
+
+  /* -------------------------------------------------------------------------- */
+  /*                            all the find methods                            */
+  /* -------------------------------------------------------------------------- */
 
   @Get()
   findAll() {
-    return this.examService.findAll();
+    return this.examResultService.findAll(5, 0);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.examService.findOne(+id);
+  findById(@Param('id') id: string) {
+    return this.examResultService.findOne(+id);
   }
 
-  @Put(':id')
-  async update(@Param('id') id: string, @Body() updateExamDto: UpdateExamDto) {
-    const exam = await this.examService.findOne(+id);
-
-    // if update the question
-    if (updateExamDto.questionIds) {
-      let questions = await Promise.all(
-        updateExamDto.questionIds.map(async (questionId) => {
-          let result = await this.questionService.findOne(questionId);
-          if (result === null) {
-            throw new NotFoundException('Question not found');
-          }
-          return result;
-        }),
-      );
-      exam.questions = questions;
-    }
-    if (updateExamDto.chapterId) exam.chapterId = updateExamDto.chapterId;
-    if (updateExamDto.subjectId) exam.subjectId = updateExamDto.subjectId;
-    if (updateExamDto.expiryTime) exam.expiryTime = updateExamDto.expiryTime;
-
-    return this.examService.update(+id, exam);
+  @Get('exam/:examId')
+  findFromExamId(
+    @Query() pagination: PaginationQuery,
+    @Param('examId') examId: string,
+  ) {
+    return this.examResultService.findOne(+examId);
   }
+
+  @Get('student/:studentId')
+  findFromStudentId(
+    @Query() pagination: PaginationQuery,
+    @Param('studentId') studentId: string) {
+    return this.examResultService.findOne(+studentId);
+  }
+
+  /* ------------------------------------ - ----------------------------------- */
+
+  // @Put(':id')
+  // async update(@Param('id') id: string, @Body() updateExamDto: UpdateExamDto) {
+  //   const exam = await this.examResultService.findOne(+id);
+
+  //   // if update the question
+  //   if (updateExamDto.questionIds) {
+  //     let questions = await Promise.all(
+  //       updateExamDto.questionIds.map(async (questionId) => {
+  //         let result = await this.questionService.findOne(questionId);
+  //         if (result === null) {
+  //           throw new NotFoundException('Question not found');
+  //         }
+  //         return result;
+  //       }),
+  //     );
+  //     exam.questions = questions;
+  //   }
+  //   if (updateExamDto.chapterId) exam.chapterId = updateExamDto.chapterId;
+  //   if (updateExamDto.subjectId) exam.subjectId = updateExamDto.subjectId;
+  //   if (updateExamDto.expiryTime) exam.expiryTime = updateExamDto.expiryTime;
+
+  //   return this.examResultService.update(+id, exam);
+  // }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    return await this.examService.remove(+id);
+    return await this.examResultService.remove(+id);
   }
 }

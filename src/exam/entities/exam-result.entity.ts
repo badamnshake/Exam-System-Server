@@ -31,4 +31,13 @@ export class ExamResult {
 
   @Column({ nullable: true })
   chapterId: number;
+
+  @Column()
+  correctAnswers: number;
+
+  @Column()
+  wrongAnswers: number;
+
+  @Column()
+  marksInPercentage: number;
 }
