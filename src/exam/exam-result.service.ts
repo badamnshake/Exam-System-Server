@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,7 +8,7 @@ import { Exam } from './entities/exam.entity';
 @Injectable()
 export class ExamResultService {
   constructor(
-    @InjectRepository(Exam)
+    @InjectRepository(ExamResult)
     private readonly examResultRepository: Repository<ExamResult>,
   ) {}
   async create(exam: Exam) {
@@ -33,9 +32,7 @@ export class ExamResultService {
     }
 
     const result = await this.examResultRepository
-      .createQueryBuilder('exam')
-      .select('exam.id', 'id')
-      .addSelect('exam.information', 'information')
+      .createQueryBuilder()
       .take(take)
       .skip(skip)
       .orderBy()
@@ -46,24 +43,29 @@ export class ExamResultService {
     };
   }
 
-  async findOne(id: number) {
-    const result = await this.examResultRepository.findOne({
-      where: { id: id },
-      relations: ['questions'],
-    });
 
-    return result;
+  async findById(id: number) {
+    return await this.examResultRepository.findOneBy({ id });
   }
 
-//   async update(id: number, exam: Exam) {
-//     const { questions, chapterId, subjectId, expiryTime } = exam;
-//     return await this.examResultRepository.update(id, {
-//       questions,
-//       chapterId,
-//       subjectId,
-//       expiryTime,
-//     });
-//   }
+  async findFromExamId(take: number, skip: number, examId: number) {
+    return await this.examResultRepository
+      .createQueryBuilder('examResult')
+      .where('examResult.examId = :examId', { examId })
+      .take(take)
+      .skip(skip)
+      .getManyAndCount();
+  }
+
+  async findFromStudentId(take: number, skip: number, studentId: number) {
+    return await this.examResultRepository
+      .createQueryBuilder('examResult')
+      .where('examResult.studentId = :studentId', { studentId })
+      .take(take)
+      .skip(skip)
+      .getManyAndCount();
+  }
+
 
   async remove(id: number) {
     return await this.examResultRepository.delete(id);

@@ -18,49 +18,58 @@ import { ChapterService } from 'src/question/services/chapter.service';
 import { ApiTags } from '@nestjs/swagger';
 import { PaginationQuery } from 'src/_shared/pagination-query.dto';
 import { ExamResultService } from '../exam-result.service';
+import { CreateExamResultDto } from '../dto/create-exam-result.dto';
+import { ExamService } from '../exam.service';
+import { UserService } from 'src/user/user.service';
+import { ExamResult } from '../entities/exam-result.entity';
 
 @ApiTags('Exam-Result')
 @Controller('exam-result')
 export class ExamResultController {
   constructor(
     private readonly examResultService: ExamResultService,
-    private readonly questionService: QuestionService,
-    private readonly subjectService: SubjectService,
-    private readonly chapterService: ChapterService,
+    private readonly examService: ExamService,
+    private readonly userService: UserService,
   ) {}
 
   @Post()
-  async create(@Body() createExamDto: CreateExamDto) {
-    // get all questions from id
-    let questions = await Promise.all(
-      createExamDto.questionIds.map(async (questionId) => {
-        let result = await this.questionService.findOne(questionId);
-        if (result === null) {
-          throw new NotFoundException('Question not found');
-        }
-        return result;
-      }),
-    );
-    // check subject
-    let subject = await this.subjectService.findById(createExamDto.subjectId);
-    if (!subject) throw new NotFoundException('Subject not found');
+  async create(@Body() createExamDto: CreateExamResultDto) {
+    // get exam from id
+    let exam = await this.examService.findOne(createExamDto.examId);
+    if (exam === null) {
+      throw new NotFoundException('Exam not found');
+    }
 
-    // check chapter
-    let chapter = await this.chapterService.findById(createExamDto.chapterId);
-    if (!chapter) throw new NotFoundException('Chapter not found');
-    // create exam
-    let exam = new Exam();
+    let student = await this.userService.findOne(createExamDto.studentId);
+    if (student === null) {
+      throw new NotFoundException('Student not found');
+    }
 
-    exam.information = createExamDto.information;
-    exam.expiryTime = createExamDto.expiryTime;
-    exam.questions = questions;
-    exam.chapterId = chapter.id;
-    exam.subjectId = subject.id;
-    // exam given times is 0 when its initialized
+    let newExamResult = new ExamResult();
+    // set attributes
+    newExamResult.test = exam;
+    newExamResult.student = student;
+    newExamResult.subjectId = exam.subjectId;
+    newExamResult.chapterId = exam.chapterId;
 
-    return this.examResultService.create(exam);
+    newExamResult.correctAnswers = 0;
+    newExamResult.wrongAnswers = 0;
+
+    createExamDto.answers.forEach(({ wasCorrect }) => {
+      if (wasCorrect) {
+        newExamResult.correctAnswers++;
+      } else {
+        newExamResult.wrongAnswers++;
+      }
+    });
+
+    newExamResult.marksInPercentage =
+      (newExamResult.correctAnswers /
+        (newExamResult.correctAnswers + newExamResult.wrongAnswers)) *
+      100;
+
+    return newExamResult;
   }
-
 
   /* -------------------------------------------------------------------------- */
   /*                            all the find methods                            */
@@ -72,8 +81,8 @@ export class ExamResultController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.examResultService.findOne(+id);
+  async findById(@Param('id') id: string) {
+    return await this.examResultService.findById(+id);
   }
 
   @Get('exam/:examId')
@@ -81,41 +90,20 @@ export class ExamResultController {
     @Query() pagination: PaginationQuery,
     @Param('examId') examId: string,
   ) {
-    return this.examResultService.findOne(+examId);
+    const take = pagination.limit || 10;
+    const skip = pagination.page * take || 0;
+    return this.examResultService.findFromExamId(take, skip, +examId);
   }
 
   @Get('student/:studentId')
   findFromStudentId(
     @Query() pagination: PaginationQuery,
-    @Param('studentId') studentId: string) {
-    return this.examResultService.findOne(+studentId);
+    @Param('studentId') studentId: string,
+  ) {
+    const take = pagination.limit || 10;
+    const skip = pagination.page * take || 0;
+    return this.examResultService.findFromStudentId(take, skip, +studentId);
   }
-
-  /* ------------------------------------ - ----------------------------------- */
-
-  // @Put(':id')
-  // async update(@Param('id') id: string, @Body() updateExamDto: UpdateExamDto) {
-  //   const exam = await this.examResultService.findOne(+id);
-
-  //   // if update the question
-  //   if (updateExamDto.questionIds) {
-  //     let questions = await Promise.all(
-  //       updateExamDto.questionIds.map(async (questionId) => {
-  //         let result = await this.questionService.findOne(questionId);
-  //         if (result === null) {
-  //           throw new NotFoundException('Question not found');
-  //         }
-  //         return result;
-  //       }),
-  //     );
-  //     exam.questions = questions;
-  //   }
-  //   if (updateExamDto.chapterId) exam.chapterId = updateExamDto.chapterId;
-  //   if (updateExamDto.subjectId) exam.subjectId = updateExamDto.subjectId;
-  //   if (updateExamDto.expiryTime) exam.expiryTime = updateExamDto.expiryTime;
-
-  //   return this.examResultService.update(+id, exam);
-  // }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {

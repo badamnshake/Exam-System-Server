@@ -27,7 +27,7 @@ export class UserService {
     return await this.userRepository.findBy({ role: Role.STUDENT });
   }
   async findOne(id: number) {
-    return await this.userRepository.findBy({ id });
+    return await this.userRepository.findOneBy({ id });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

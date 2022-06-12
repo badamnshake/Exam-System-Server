@@ -17,8 +17,8 @@ export class ExamResult {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => Answer, (answer) => answer.examResult)
-  answers: Answer[];
+  // @OneToMany(() => Answer, (answer) => answer.examResult)
+  // answers: Answer[];
 
   @ManyToOne(() => Exam, (test) => test.testResults)
   test: Exam;
