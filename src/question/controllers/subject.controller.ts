@@ -109,9 +109,16 @@ export class SubjectController {
   }
 
   @Delete('chapter/:id')
-  deleteChapter(@Param('id') id: number) {
-    return this.chapterService.remove(id);
+  async deleteChapter(@Param('id') id: number) {
+    return await this.chapterService.remove(id);
   }
+
+  @Delete(':id')
+  async deleteSubect(@Param('id') id: number) {
+    return await this.subjectService.remove(id);
+  }
+
+
 
   //#endregion
 }

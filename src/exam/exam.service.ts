@@ -32,8 +32,6 @@ export class ExamService {
 
     const result = await this.examRepository
       .createQueryBuilder('exam')
-      .select('exam.id', 'id')
-      .addSelect('exam.information', 'information')
       .take(take)
       .skip(skip)
       .orderBy()
