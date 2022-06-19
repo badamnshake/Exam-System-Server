@@ -68,7 +68,7 @@ export class ExamResultController {
         (newExamResult.correctAnswers + newExamResult.wrongAnswers)) *
       100;
 
-    return newExamResult;
+    return await this.examResultService.create(newExamResult);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -76,8 +76,10 @@ export class ExamResultController {
   /* -------------------------------------------------------------------------- */
 
   @Get()
-  findAll() {
-    return this.examResultService.findAll(5, 0);
+  async findAll(@Query() pagination: PaginationQuery) {
+    const take = pagination.limit || 10;
+    const skip = pagination.page * take || 0;
+    return await this.examResultService.findAll(take, skip);
   }
 
   @Get(':id')

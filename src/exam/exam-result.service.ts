@@ -11,7 +11,7 @@ export class ExamResultService {
     @InjectRepository(ExamResult)
     private readonly examResultRepository: Repository<ExamResult>,
   ) {}
-  async create(exam: Exam) {
+  async create(exam: ExamResult) {
     const newExam = this.examResultRepository.create(exam);
     const result = await this.examResultRepository.save(newExam);
     return result;
