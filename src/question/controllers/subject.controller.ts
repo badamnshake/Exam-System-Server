@@ -19,6 +19,7 @@ import { UpdateSubjectDto } from '../dto/subject/update-subject.dto';
 import { Chapter } from '../entities/chapter.entity';
 import { Subject } from '../entities/subject.entity';
 import { ChapterService } from '../services/chapter.service';
+import { QuestionService } from '../services/question.service';
 import { SubjectService } from '../services/subject.service';
 
 @ApiTags('subject')
@@ -26,6 +27,7 @@ import { SubjectService } from '../services/subject.service';
 export class SubjectController {
   constructor(
     private readonly subjectService: SubjectService,
+    private readonly questionService: QuestionService,
     private readonly chapterService: ChapterService,
   ) {}
 
@@ -73,9 +75,8 @@ export class SubjectController {
   @Delete(':id')
   async deleteSubject(@Param('id') id: string) {
     const sub = await this.findOne(id);
-    sub.chapters.forEach(async (chapter) => {
-      await this.chapterService.remove(chapter.id);
-    });
+    console.log(sub);
+    if (!sub) throw new BadRequestException('subect with id doesnt exist');
     return await this.subjectService.remove(+id);
   }
 

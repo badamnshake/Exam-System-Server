@@ -25,7 +25,7 @@ export class QuestionService {
   }
 
   async remove(id: number) {
-    return await this.questionRepository.delete(id);
+    return await this.questionRepository.delete({id});
   }
 
   async findAll(take: number, skip: number) {

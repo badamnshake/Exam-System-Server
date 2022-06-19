@@ -24,7 +24,7 @@ export class Question {
   @Column()
   options: string;
 
-  @ManyToOne(() => Subject)
+  @ManyToOne(() => Subject, {onDelete: 'CASCADE'})
   subject: Subject;
 
   @ManyToOne(() => Chapter)

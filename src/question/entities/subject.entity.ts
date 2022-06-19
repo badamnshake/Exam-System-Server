@@ -7,12 +7,14 @@ export class Subject {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   name: string;
 
-  @OneToMany(() => Chapter, (chapter) => chapter.subject)
+  @OneToMany(() => Chapter, (chapter) => chapter.subject, {
+  })
   chapters: Chapter[];
 
-  @OneToMany(() => Question, (question) => question.subject)
+  @OneToMany(() => Question, (question) => question.subject, {
+  })
   questions: Question[];
 }

@@ -16,9 +16,11 @@ export class Chapter {
   @Column()
   name: string;
 
-  @ManyToOne(() => Subject, (subject) => subject.chapters)
+  @ManyToOne(() => Subject, (subject) => subject.chapters, {onDelete: 'CASCADE'})
   subject: Subject;
 
-  @OneToMany(() => Question, (question) => question.chapter, { eager: false })
+  @OneToMany(() => Question, (question) => question.chapter, {
+    eager: false,
+  })
   questions: Question[];
 }
