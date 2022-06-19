@@ -34,6 +34,6 @@ export class SubjectService {
     return await this.subjectRepository.findOne({ where: { name } });
   }
   async remove(id: number) {
-    return await this.subjectRepository.delete(id);
+    return await this.subjectRepository.delete({id});
   }
 }
