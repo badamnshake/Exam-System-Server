@@ -113,10 +113,6 @@ export class SubjectController {
     return await this.chapterService.remove(id);
   }
 
-  @Delete(':id')
-  async deleteSubect(@Param('id') id: number) {
-    return await this.subjectService.remove(id);
-  }
 
 
 
