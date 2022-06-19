@@ -72,6 +72,10 @@ export class SubjectController {
 
   @Delete(':id')
   async deleteSubject(@Param('id') id: string) {
+    const sub = await this.findOne(id);
+    sub.chapters.forEach(async (chapter) => {
+      await this.chapterService.remove(chapter.id);
+    });
     return await this.subjectService.remove(+id);
   }
 
@@ -112,9 +116,6 @@ export class SubjectController {
   async deleteChapter(@Param('id') id: number) {
     return await this.chapterService.remove(id);
   }
-
-
-
 
   //#endregion
 }
